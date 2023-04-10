@@ -12,5 +12,9 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
+
 rootProject.name = "Xo Tedio"
-include ':app'
+include(":app")
+include(":design")
+include(":data")
+include(":home")
