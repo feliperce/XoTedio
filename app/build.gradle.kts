@@ -7,15 +7,15 @@ plugins {
 }
 
 android {
-    namespace = "br.com.mobileti.xotedio"
-    compileSdk = 33
+    namespace = Config.namespace
+    compileSdk = Config.compileSdk
 
     defaultConfig {
-        applicationId = "br.com.mobileti.xotedio"
-        minSdk = 21
-        targetSdk = 33
-        versionCode = 1
-        versionName = "0.5"
+        applicationId = Config.namespace
+        minSdk = Config.minSdk
+        targetSdk = Config.targetSdk
+        versionCode = Config.versionCode
+        versionName = Config.versionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -54,41 +54,44 @@ android {
 
 dependencies {
 
-    val koinVersion = "3.2.0"
+    implementation(Dependencies.Androidx.core)
+    implementation(Dependencies.Androidx.Lifecycle.runtimeKtx)
 
-    implementation("androidx.core:core-ktx:1.10.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
-    implementation("androidx.activity:activity-compose:1.7.0")
+    testImplementation(Dependencies.Junit.junit)
+    androidTestImplementation(Dependencies.Androidx.junit)
+    androidTestImplementation(Dependencies.Androidx.espresso)
 
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-
-    val composeBom = platform("androidx.compose:compose-bom:2023.01.00")
+    val composeBom = platform(Dependencies.Androidx.Compose.bom)
     implementation(composeBom)
     androidTestImplementation(composeBom)
 
-    implementation("androidx.compose.foundation:foundation:1.4.1")
-    implementation("androidx.compose.material:material")
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
-    implementation("androidx.activity:activity-compose:1.7.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
-    implementation("androidx.compose.runtime:runtime-livedata")
-    implementation("androidx.compose.material:material-icons-core")
-    implementation("androidx.compose.material:material-icons-extended")
-    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
-    implementation("androidx.navigation:navigation-compose:2.5.3")
-    implementation("androidx.compose.material3:material3:1.1.0-beta02")
+    implementation(Dependencies.Androidx.Compose.foundation)
+    implementation(Dependencies.Androidx.Compose.material)
+    implementation(Dependencies.Androidx.Compose.ui)
+    implementation(Dependencies.Androidx.Compose.toolingPreview)
+    debugImplementation(Dependencies.Androidx.Compose.tooling)
+    androidTestImplementation(Dependencies.Androidx.Compose.uiTestJunit)
+    debugImplementation(Dependencies.Androidx.Compose.uiTestManifest)
+    implementation(Dependencies.Androidx.Compose.activity)
+    implementation(Dependencies.Androidx.Compose.viewModel)
+    implementation(Dependencies.Androidx.Compose.livedata)
+    implementation(Dependencies.Androidx.Compose.iconsCore)
+    implementation(Dependencies.Androidx.Compose.iconsExtended)
+    implementation(Dependencies.Androidx.Compose.constraint)
+    implementation(Dependencies.Androidx.Compose.navHost)
+    implementation(Dependencies.Androidx.Compose.material3)
 
     // Koin
-    implementation("io.insert-koin:koin-android:$koinVersion")
-    implementation("io.insert-koin:koin-androidx-compose:$koinVersion")
+    implementation(Dependencies.Koin.koin)
+    implementation(Dependencies.Koin.compose)
 
-    // Gson
-    implementation("com.google.code.gson:gson:2.10.1")
+    // Retrofit
+    implementation(Dependencies.Square.retrofit)
+    implementation(Dependencies.Square.gsonConverter)
+    // Okhttp
+    val okHttpBom = platform(Dependencies.Square.okHttpBom)
+    implementation(okHttpBom)
+    implementation(Dependencies.Square.okHttp)
+    implementation(Dependencies.Square.okHttpLogging)
 
 }
