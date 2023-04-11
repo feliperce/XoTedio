@@ -5,11 +5,11 @@ plugins {
 
 android {
     namespace = "${Config.namespace}.design"
-    compileSdk = 32
+    compileSdk = Config.compileSdk
 
     defaultConfig {
-        minSdk = 21
-        targetSdk = 32
+        minSdk = Config.minSdk
+        targetSdk = Config.targetSdk
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -31,14 +31,41 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    buildFeatures {
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = Config.composeKotlinCompilerVersion
+    }
+    packagingOptions {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
 }
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.7.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.8.0")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    implementation(Dependencies.Androidx.core)
+
+    val composeBom = platform(Dependencies.Androidx.Compose.bom)
+    implementation(composeBom)
+    androidTestImplementation(composeBom)
+
+    implementation(Dependencies.Androidx.Compose.foundation)
+    implementation(Dependencies.Androidx.Compose.material)
+    implementation(Dependencies.Androidx.Compose.ui)
+    implementation(Dependencies.Androidx.Compose.toolingPreview)
+    debugImplementation(Dependencies.Androidx.Compose.tooling)
+    androidTestImplementation(Dependencies.Androidx.Compose.uiTestJunit)
+    debugImplementation(Dependencies.Androidx.Compose.uiTestManifest)
+    implementation(Dependencies.Androidx.Compose.activity)
+    implementation(Dependencies.Androidx.Compose.viewModel)
+    implementation(Dependencies.Androidx.Compose.livedata)
+    implementation(Dependencies.Androidx.Compose.iconsCore)
+    implementation(Dependencies.Androidx.Compose.iconsExtended)
+    implementation(Dependencies.Androidx.Compose.constraint)
+    implementation(Dependencies.Androidx.Compose.navHost)
+    implementation(Dependencies.Androidx.Compose.material3)
+
 }

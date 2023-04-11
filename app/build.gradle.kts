@@ -94,4 +94,7 @@ dependencies {
     implementation(Dependencies.Square.okHttp)
     implementation(Dependencies.Square.okHttpLogging)
 
+    implementation(project(":design"))
+    implementation(project(":home"))
+
 }

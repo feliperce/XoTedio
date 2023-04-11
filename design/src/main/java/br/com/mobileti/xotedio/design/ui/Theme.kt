@@ -1,4 +1,4 @@
-package br.com.mobileti.xotedio.ui.theme
+package br.com.mobileti.xotedio.design.ui
 
 import android.app.Activity
 import android.os.Build
