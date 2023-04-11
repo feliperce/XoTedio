@@ -1,4 +1,4 @@
-package br.com.mobileti.xotedio.ui.theme
+package br.com.mobileti.xotedio.design.ui
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

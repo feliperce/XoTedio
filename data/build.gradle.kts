@@ -1,15 +1,21 @@
+import com.google.protobuf.gradle.generateProtoTasks
+import com.google.protobuf.gradle.protobuf
+import com.google.protobuf.gradle.protoc
+
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    kotlin("kapt")
+    id("com.google.protobuf") version "0.8.17"
 }
 
 android {
     namespace = "${Config.namespace}.data"
-    compileSdk = 32
+    compileSdk = Config.compileSdk
 
     defaultConfig {
-        minSdk = 21
-        targetSdk = 32
+        minSdk = Config.minSdk
+        targetSdk = Config.targetSdk
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -35,10 +41,43 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.7.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.8.0")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    implementation(Dependencies.Androidx.core)
+    implementation(Dependencies.Androidx.Lifecycle.runtimeKtx)
+
+    testImplementation(Dependencies.Junit.junit)
+    androidTestImplementation(Dependencies.Androidx.junit)
+
+    // Koin
+    implementation(Dependencies.Koin.koin)
+    implementation(Dependencies.Koin.compose)
+
+    // Retrofit
+    implementation(Dependencies.Square.retrofit)
+    implementation(Dependencies.Square.gsonConverter)
+    // Okhttp
+    val okHttpBom = platform(Dependencies.Square.okHttpBom)
+    implementation(okHttpBom)
+    implementation(Dependencies.Square.okHttp)
+    implementation(Dependencies.Square.okHttpLogging)
+
+    // DataStore
+    implementation(Dependencies.Androidx.DataStore.proto)
+    implementation(Dependencies.Google.Protobuf.javalite)
+}
+
+protobuf {
+    protoc {
+        // find latest version number here:
+        // https://mvnrepository.com/artifact/com.google.protobuf/protoc
+        artifact = "com.google.protobuf:protoc:3.21.7"
+    }
+    generateProtoTasks {
+        all().forEach { task ->
+            task.plugins{
+                create("java") {
+                    option("lite")
+                }
+            }
+        }
+    }
 }
