@@ -85,4 +85,7 @@ dependencies {
     implementation(okHttpBom)
     implementation(Dependencies.Square.okHttp)
     implementation(Dependencies.Square.okHttpLogging)
+
+    implementation(project(":data"))
+    implementation(project(":design"))
 }

@@ -1,4 +1,4 @@
-package br.com.mobileti.xotedio.data.extension
+package br.com.mobileti.xotedio.data.remote.extension
 
 import br.com.mobileti.xotedio.data.Resource
 import br.com.mobileti.xotedio.data.ErrorType

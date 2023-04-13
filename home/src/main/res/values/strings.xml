@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="activity_suggest_activity_title">%s - (%s participantes)</string>
+
+    <string name="activity_suggest_price_title">Preço: %s</string>
+
+</resources>

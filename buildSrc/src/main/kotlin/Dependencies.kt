@@ -33,6 +33,12 @@ object Dependencies {
             const val runtimeKtx = "androidx.lifecycle:lifecycle-runtime-ktx:2.6.1"
         }
 
+        object Room {
+            const val runtime = "androidx.room:room-runtime:2.3.0"
+            const val compiler = "androidx.room:room-compiler:2.3.0"
+            const val ktx = "androidx.room:room-ktx:2.3.0"
+        }
+
     }
 
     object Google {

@@ -9,6 +9,8 @@ plugins {
     id("com.google.protobuf") version "0.8.17"
 }
 
+val endPointUrl = "http://www.boredapi.com/"
+
 android {
     namespace = "${Config.namespace}.data"
     compileSdk = Config.compileSdk
@@ -28,6 +30,11 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
+            buildConfigField("String", "ENDPOINT_URL", "\"$endPointUrl\"")
+        }
+        debug {
+            buildConfigField("String", "ENDPOINT_URL", "\"$endPointUrl\"")
         }
     }
     compileOptions {
@@ -63,6 +70,11 @@ dependencies {
     // DataStore
     implementation(Dependencies.Androidx.DataStore.proto)
     implementation(Dependencies.Google.Protobuf.javalite)
+
+    // Room
+    implementation(Dependencies.Androidx.Room.runtime)
+    kapt(Dependencies.Androidx.Room.compiler)
+    implementation(Dependencies.Androidx.Room.ktx)
 }
 
 protobuf {
