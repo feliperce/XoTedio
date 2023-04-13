@@ -9,10 +9,7 @@ import br.com.mobileti.xotedio.home.feature.mapper.toActivityEntity
 import br.com.mobileti.xotedio.home.feature.mapper.toActivitySuggest
 import br.com.mobileti.xotedio.home.feature.mapper.toActivitySuggestList
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 
 class HomeRepository(
@@ -42,12 +39,18 @@ class HomeRepository(
     }
     .flowOn(Dispatchers.IO)
 
-    suspend fun getAllActivitySuggest() = withContext(Dispatchers.IO) {
-        activityDao.getAllActivities().toActivitySuggestList()
-    }
+    suspend fun getAllActivitySuggest() =
+        activityDao.getAllActivities().flowOn(Dispatchers.IO).map {
+            it.toActivitySuggestList()
+        }
+
 
     suspend fun updateActivitySuggest(activitySuggest: ActivitySuggest) = withContext(Dispatchers.IO) {
         activityDao.updateActivity(activitySuggest.toActivityEntity())
+    }
+
+    suspend fun removeActivitySuggest(activitySuggest: ActivitySuggest) = withContext(Dispatchers.IO) {
+        activityDao.deleteActivity(activitySuggest.toActivityEntity())
     }
 
 }

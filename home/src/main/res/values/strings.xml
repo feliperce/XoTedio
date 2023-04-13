@@ -4,13 +4,6 @@
     <string name="appbar_title">Xô Tédio</string>
 
     <plurals name="activity_suggest_activity_title">
-        <!--
-             As a developer, you should always supply "one" and "other"
-             strings. Your translators will know which strings are actually
-             needed for their language. Always include %d in "one" because
-             translators will need to use %d for languages where "one"
-             doesn't mean 1 (as explained above).
-          -->
         <item quantity="one">%s - (%d participante)</item>
         <item quantity="other">%s - (%d participantes)</item>
     </plurals>
@@ -28,5 +21,9 @@
     <string name="add_activity_suggest_negative_button_dialog">cancelar</string>
 
     <string name="home_activity_insert_sucess_snackbar">Atividade aleatória adicionada com sucesso!</string>
+
+    <string name="activity_suggest_remove_title_dialog">Deseja remover esta atividade?</string>
+    <string name="activity_suggest_remove_positive_button_dialog">sim</string>
+    <string name="activity_suggest_remove_negative_button_dialog">não</string>
 
 </resources>

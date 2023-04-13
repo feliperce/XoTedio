@@ -6,7 +6,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -19,7 +20,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import br.com.mobileti.commons.extensions.getPassedHours
-import br.com.mobileti.commons.extensions.timeMillisToDateFormatString
 import br.com.mobileti.xotedio.data.ErrorType
 import br.com.mobileti.xotedio.data.remote.ActivityStatus
 import br.com.mobileti.xotedio.data.remote.ActivitySuggestType
@@ -85,6 +85,11 @@ fun HomeScreen(homeViewModel: HomeViewModel = getViewModel()) {
             homeViewModel.sendIntent(
                 HomeIntent.UpdateActivitySuggest(activitySuggest = it)
             )
+        },
+        onRemoveClick = {
+            homeViewModel.sendIntent(
+                HomeIntent.RemoveActivitySuggest(activitySuggest = it)
+            )
         }
     )
 }
@@ -96,7 +101,8 @@ fun HomeContent(
     activitySuggestList: List<ActivitySuggest>,
     onAddActivitySuggestClick: (type: String) -> Unit,
     onCompleteButtonClick: (activitySuggest: ActivitySuggest) -> Unit,
-    onWaiverButtonClick: (activitySuggest: ActivitySuggest) -> Unit
+    onWaiverButtonClick: (activitySuggest: ActivitySuggest) -> Unit,
+    onRemoveClick: (activitySuggest: ActivitySuggest) -> Unit
 ) {
 
     var openAddActivitySuggestDialog by remember { mutableStateOf(false) }
@@ -123,7 +129,8 @@ fun HomeContent(
                 ActivitySuggestList(
                     activitySuggestList = activitySuggestList,
                     onCompleteButtonClick = onCompleteButtonClick,
-                    onWaiverButtonClick = onWaiverButtonClick
+                    onWaiverButtonClick = onWaiverButtonClick,
+                    onRemoveClick = onRemoveClick
                 )
             }
 
@@ -156,8 +163,13 @@ fun HomeContent(
 fun ActivitySuggestItem(
     activitySuggest: ActivitySuggest,
     onCompleteButtonClick: (activitySuggest: ActivitySuggest) -> Unit,
-    onWaiverButtonClick: (activitySuggest: ActivitySuggest) -> Unit
+    onWaiverButtonClick: (activitySuggest: ActivitySuggest) -> Unit,
+    onRemoveClick: (activitySuggest: ActivitySuggest) -> Unit
 ) {
+
+    var openRemoveDialogState by remember {
+        mutableStateOf(false)
+    }
 
     var activitySuggestStatusState by remember {
         mutableStateOf(activitySuggest.status)
@@ -182,11 +194,32 @@ fun ActivitySuggestItem(
         }
     }
 
+    if (openRemoveDialogState) {
+        RemoveActivitySuggestDialog(
+            onDismiss = { openRemoveDialogState = false },
+            onPositiveButtonClick = {
+                onRemoveClick(activitySuggest)
+            }
+        )
+    }
+
     Column(
         modifier = Modifier
             .background(bgColor)
             .padding(MarginPaddingSizeMedium)
     ) {
+
+        IconButton(
+            modifier = Modifier.align(Alignment.End),
+            onClick = { openRemoveDialogState = true },
+            content = {
+                Icon(
+                    Icons.Outlined.Delete,
+                    contentDescription = null
+                )
+            }
+        )
+
         Row(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -274,14 +307,16 @@ fun ActivitySuggestItem(
 fun ActivitySuggestList(
     activitySuggestList: List<ActivitySuggest>,
     onCompleteButtonClick: (activitySuggest: ActivitySuggest) -> Unit,
-    onWaiverButtonClick: (activitySuggest: ActivitySuggest) -> Unit
+    onWaiverButtonClick: (activitySuggest: ActivitySuggest) -> Unit,
+    onRemoveClick: (activitySuggest: ActivitySuggest) -> Unit
 ) {
     LazyColumn {
         items(activitySuggestList) { activitySuggest ->
             ActivitySuggestItem(
                 activitySuggest = activitySuggest,
                 onCompleteButtonClick = onCompleteButtonClick,
-                onWaiverButtonClick = onWaiverButtonClick
+                onWaiverButtonClick = onWaiverButtonClick,
+                onRemoveClick = onRemoveClick
             )
             Divider(color = Color.Black, thickness = 1.dp)
         }
@@ -371,12 +406,46 @@ fun AddActivitySuggestDialog(
 }
 
 @Composable
+fun RemoveActivitySuggestDialog(
+    onDismiss: () -> Unit,
+    onPositiveButtonClick: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = { onDismiss() },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onPositiveButtonClick()
+                    onDismiss()
+                },
+                content = {
+                    Text(
+                        text = stringResource(
+                            id = R.string.activity_suggest_remove_positive_button_dialog
+                        )
+                    )
+                }
+            )
+        },
+        dismissButton = {
+            TextButton(onClick = { onDismiss() }) {
+                Text(
+                    text = stringResource(id = R.string.activity_suggest_remove_negative_button_dialog)
+                )
+            }
+        },
+        title = { Text(text = stringResource(id = R.string.activity_suggest_remove_title_dialog)) }
+    )
+}
+
+@Composable
 @Preview
 fun ActivitySuggestItemPreview() {
     ActivitySuggestItem(
         activitySuggest = fakeActivitySuggest,
         onCompleteButtonClick = {},
-        onWaiverButtonClick = {}
+        onWaiverButtonClick = {},
+        onRemoveClick = {}
     )
 }
 
@@ -386,7 +455,8 @@ fun ActivitySuggestListPreview() {
     ActivitySuggestList(
         activitySuggestList = fakeActivitySuggestList,
         onCompleteButtonClick = {},
-        onWaiverButtonClick = {}
+        onWaiverButtonClick = {},
+        onRemoveClick = {}
     )
 }
 
@@ -399,7 +469,8 @@ fun HomeContentPreview() {
         activitySuggestList = fakeActivitySuggestList,
         onAddActivitySuggestClick = {},
         onWaiverButtonClick = {},
-        onCompleteButtonClick = {}
+        onCompleteButtonClick = {},
+        onRemoveClick = {}
     )
 }
 

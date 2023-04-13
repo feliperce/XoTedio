@@ -14,4 +14,5 @@ sealed class HomeIntent {
     class InsertRandomActivitySuggest(val type: String): HomeIntent()
     object GetAllRandomActivitySuggest: HomeIntent()
     class UpdateActivitySuggest(val activitySuggest: ActivitySuggest): HomeIntent()
+    class RemoveActivitySuggest(val activitySuggest: ActivitySuggest): HomeIntent()
 }
