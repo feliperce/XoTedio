@@ -15,6 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -207,10 +209,13 @@ fun ActivitySuggestItem(
         modifier = Modifier
             .background(bgColor)
             .padding(MarginPaddingSizeMedium)
+            .semantics { contentDescription = "activitySuggestItem" }
     ) {
 
         IconButton(
-            modifier = Modifier.align(Alignment.End),
+            modifier = Modifier
+                .align(Alignment.End)
+                .semantics { contentDescription = "removeButton" },
             onClick = { openRemoveDialogState = true },
             content = {
                 Icon(
@@ -237,6 +242,7 @@ fun ActivitySuggestItem(
             )
 
             BalloonText(
+                modifier = Modifier.semantics { contentDescription = "statusBalloon" },
                 text = activitySuggestStatusState.status,
                 backgroundColor = activitySuggestStatusState.getColor()
             )
@@ -266,7 +272,8 @@ fun ActivitySuggestItem(
                 Button(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(MarginPaddingSizeMedium),
+                        .padding(MarginPaddingSizeMedium)
+                        .semantics { contentDescription = "activityCompleteButton" },
                     onClick = {
                         activitySuggestStatusState = ActivityStatus.COMPLETED
                         val suggest = activitySuggest.copy(
@@ -284,7 +291,8 @@ fun ActivitySuggestItem(
                 Button(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(MarginPaddingSizeMedium),
+                        .padding(MarginPaddingSizeMedium)
+                        .semantics { contentDescription = "activityWaiverButton" },
                     onClick = {
                         activitySuggestStatusState = ActivityStatus.WAIVER
                         val suggest = activitySuggest.copy(
@@ -310,7 +318,9 @@ fun ActivitySuggestList(
     onWaiverButtonClick: (activitySuggest: ActivitySuggest) -> Unit,
     onRemoveClick: (activitySuggest: ActivitySuggest) -> Unit
 ) {
-    LazyColumn {
+    LazyColumn(
+        modifier = Modifier.semantics { contentDescription = "activitySuggestList" }
+    ) {
         items(activitySuggestList) { activitySuggest ->
             ActivitySuggestItem(
                 activitySuggest = activitySuggest,
@@ -407,10 +417,12 @@ fun AddActivitySuggestDialog(
 
 @Composable
 fun RemoveActivitySuggestDialog(
+    modifier: Modifier = Modifier,
     onDismiss: () -> Unit,
     onPositiveButtonClick: () -> Unit
 ) {
     AlertDialog(
+        modifier = modifier.semantics { contentDescription = "removeAlertDialog" },
         onDismissRequest = { onDismiss() },
         confirmButton = {
             TextButton(
