@@ -6,6 +6,7 @@ import br.com.mobileti.xotedio.data.Resource
 import br.com.mobileti.xotedio.home.feature.home.repository.HomeRepository
 import br.com.mobileti.xotedio.home.feature.home.state.HomeIntent
 import br.com.mobileti.xotedio.home.feature.home.state.HomeUiState
+import br.com.mobileti.xotedio.home.feature.mapper.ActivitySuggest
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -40,8 +41,17 @@ class HomeViewModel(
                     is HomeIntent.GetAllRandomActivitySuggest -> {
                         getAllActivitySuggest()
                     }
+                    is HomeIntent.UpdateActivitySuggest -> {
+                        updateActivitySuggest(activitySuggest = intent.activitySuggest)
+                    }
                 }
             }.launchIn(viewModelScope)
+    }
+
+    private fun updateActivitySuggest(activitySuggest: ActivitySuggest) {
+        viewModelScope.launch {
+            homeRepository.updateActivitySuggest(activitySuggest)
+        }
     }
 
     private fun getAllActivitySuggest() {

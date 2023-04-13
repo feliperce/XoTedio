@@ -4,6 +4,7 @@ import br.com.mobileti.xotedio.data.remote.ActivityStatus
 import java.util.Date
 
 data class ActivitySuggest(
+    val activityId: Long,
     val accessibility: Double,
     val activity: String,
     val key: String,

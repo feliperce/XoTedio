@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import br.com.mobileti.xotedio.data.local.entity.ActivityEntity
 
 @Dao
@@ -20,5 +21,8 @@ interface ActivityDao {
 
     @Query("SELECT * FROM activities")
     fun getAllActivities(): List<ActivityEntity>
+
+    @Update
+    fun updateActivity(activityEntity: ActivityEntity)
 
 }

@@ -88,4 +88,5 @@ dependencies {
 
     implementation(project(":data"))
     implementation(project(":design"))
+    implementation(project(":commons"))
 }

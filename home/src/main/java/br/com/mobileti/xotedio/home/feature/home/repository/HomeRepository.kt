@@ -4,6 +4,7 @@ import br.com.mobileti.xotedio.data.Resource
 import br.com.mobileti.xotedio.data.local.dao.ActivityDao
 import br.com.mobileti.xotedio.data.remote.BoredApiService
 import br.com.mobileti.xotedio.data.remote.extension.callNetworkData
+import br.com.mobileti.xotedio.home.feature.mapper.ActivitySuggest
 import br.com.mobileti.xotedio.home.feature.mapper.toActivityEntity
 import br.com.mobileti.xotedio.home.feature.mapper.toActivitySuggest
 import br.com.mobileti.xotedio.home.feature.mapper.toActivitySuggestList
@@ -43,6 +44,10 @@ class HomeRepository(
 
     suspend fun getAllActivitySuggest() = withContext(Dispatchers.IO) {
         activityDao.getAllActivities().toActivitySuggestList()
+    }
+
+    suspend fun updateActivitySuggest(activitySuggest: ActivitySuggest) = withContext(Dispatchers.IO) {
+        activityDao.updateActivity(activitySuggest.toActivityEntity())
     }
 
 }

@@ -13,4 +13,5 @@ data class HomeUiState(
 sealed class HomeIntent {
     class InsertRandomActivitySuggest(val type: String): HomeIntent()
     object GetAllRandomActivitySuggest: HomeIntent()
+    class UpdateActivitySuggest(val activitySuggest: ActivitySuggest): HomeIntent()
 }
