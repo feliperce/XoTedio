@@ -173,10 +173,6 @@ fun ActivitySuggestItem(
         mutableStateOf(false)
     }
 
-    var activitySuggestStatusState by remember {
-        mutableStateOf(activitySuggest.status)
-    }
-
     var activitySuggestTimeSpent by remember {
         mutableStateOf(0L)
     }
@@ -184,7 +180,7 @@ fun ActivitySuggestItem(
     activitySuggestTimeSpent = activitySuggest.timeSpent
         ?: activitySuggest.createdAt.getPassedHours()
 
-    val bgColor = when (activitySuggestStatusState) {
+    val bgColor = when (activitySuggest.status) {
         ActivityStatus.COMPLETED -> {
             Green200
         }
@@ -243,8 +239,8 @@ fun ActivitySuggestItem(
 
             BalloonText(
                 modifier = Modifier.semantics { contentDescription = "statusBalloon" },
-                text = activitySuggestStatusState.status,
-                backgroundColor = activitySuggestStatusState.getColor()
+                text = activitySuggest.status.status,
+                backgroundColor = activitySuggest.status.getColor()
             )
         }
 
@@ -268,14 +264,13 @@ fun ActivitySuggestItem(
         Row(
             modifier = Modifier.fillMaxWidth()
         ) {
-            if (activitySuggestStatusState == ActivityStatus.RUNNING) {
+            if (activitySuggest.status == ActivityStatus.RUNNING) {
                 Button(
                     modifier = Modifier
                         .weight(1f)
                         .padding(MarginPaddingSizeMedium)
                         .semantics { contentDescription = "activityCompleteButton" },
                     onClick = {
-                        activitySuggestStatusState = ActivityStatus.COMPLETED
                         val suggest = activitySuggest.copy(
                             status = ActivityStatus.COMPLETED,
                             timeSpent = activitySuggestTimeSpent
@@ -294,7 +289,6 @@ fun ActivitySuggestItem(
                         .padding(MarginPaddingSizeMedium)
                         .semantics { contentDescription = "activityWaiverButton" },
                     onClick = {
-                        activitySuggestStatusState = ActivityStatus.WAIVER
                         val suggest = activitySuggest.copy(
                             status = ActivityStatus.WAIVER,
                             timeSpent = activitySuggestTimeSpent
