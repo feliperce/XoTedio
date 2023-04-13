@@ -7,11 +7,16 @@ import kotlin.math.absoluteValue
 
 
 fun Date.getPassedHours(secondDate: Date = Date()): Long {
-    val diffInMillisec: Long = (this.getTime() - secondDate.getTime()).absoluteValue
+    val firstTime = this.time
+    val secondTime = secondDate.time
 
-    val diffInHours: Long = TimeUnit.MILLISECONDS.toHours(diffInMillisec)
+    return if (secondTime > firstTime) {
+        val diffInMillisec: Long = (this.time - secondDate.time).absoluteValue
 
-    return diffInHours
+        TimeUnit.MILLISECONDS.toHours(diffInMillisec)
+    } else {
+        0L
+    }
 }
 
 fun Long.timeMillisToDateFormatString(pattern: String = "hh"): String {
