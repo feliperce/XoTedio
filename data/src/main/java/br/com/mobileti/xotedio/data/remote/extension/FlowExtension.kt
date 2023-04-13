@@ -1,4 +1,4 @@
-package br.com.mobileti.xotedio.data.extension
+package br.com.mobileti.xotedio.data.remote.extension
 
 import br.com.mobileti.xotedio.data.Resource
 import br.com.mobileti.xotedio.data.ErrorType
@@ -13,13 +13,12 @@ fun <REMOTE, MAPPER> callNetworkData(
     remote: suspend () -> Response<REMOTE>,
     mapper: suspend (REMOTE?) -> MAPPER,
     onFinish: suspend () -> Unit = { },
-    onRemoteFail: suspend FlowCollector<Resource<MAPPER>>.(code: Int) -> Unit? = { },
-    onException: suspend FlowCollector<Resource<MAPPER>>.(error: Throwable) -> Unit? = { }
+    onRemoteFail: suspend FlowCollector<Resource<MAPPER>>.(code: Int) -> Unit? = { }
 ) = flow<Resource<MAPPER>> {
     val remoteCall = remote()
 
     if (remoteCall.isSuccessful) {
-        val remoteData = remote().body()
+        val remoteData = remoteCall.body()
 
         if (remoteData != null) {
             emit(Resource.Success(mapper(remoteData)))
@@ -43,9 +42,7 @@ fun <REMOTE, MAPPER> callNetworkData(
             emit(Resource.Error(errorType = ErrorType.TIMEOUT))
         }
         else -> {
-            if (onException.invoke(this, it) == null) {
-                emit(Resource.Error(errorType = ErrorType.GENERIC))
-            }
+            emit(Resource.Error(errorType = ErrorType.GENERIC))
         }
     }
 }.onCompletion {

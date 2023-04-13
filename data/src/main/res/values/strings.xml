@@ -1,2 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+
+    <string name="prompt_policy_error">A frase informada é proibida pelas políticas da IA</string>
+    <string name="generic_error">Erro, tente novamente mais tarde</string>
+    <string name="timeout_error">Serviço temporariamente indisponível, tente novamente mais tarde</string>
+    <string name="connection_error">Verifique sua conexão com a internet</string>
+
+</resources>
