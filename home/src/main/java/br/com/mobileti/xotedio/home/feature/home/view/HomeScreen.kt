@@ -1,28 +1,31 @@
 package br.com.mobileti.xotedio.home.feature.home.view
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import br.com.mobileti.commons.extensions.getPassedHours
 import br.com.mobileti.xotedio.data.ErrorType
 import br.com.mobileti.xotedio.data.remote.ActivityStatus
 import br.com.mobileti.xotedio.data.remote.ActivitySuggestType
 import br.com.mobileti.xotedio.design.components.BalloonText
 import br.com.mobileti.xotedio.design.components.DefaultAppBar
-import br.com.mobileti.xotedio.design.ui.Green500
-import br.com.mobileti.xotedio.design.ui.MarginPaddingSizeMedium
+import br.com.mobileti.xotedio.design.ui.*
 import br.com.mobileti.xotedio.home.R
 import br.com.mobileti.xotedio.home.feature.home.extensions.getColor
 import br.com.mobileti.xotedio.home.feature.home.state.HomeIntent
@@ -72,6 +75,21 @@ fun HomeScreen(homeViewModel: HomeViewModel = getViewModel()) {
             homeViewModel.sendIntent(
                 HomeIntent.InsertRandomActivitySuggest(type = it)
             )
+        },
+        onCompleteButtonClick = {
+            homeViewModel.sendIntent(
+                HomeIntent.UpdateActivitySuggest(activitySuggest = it)
+            )
+        },
+        onWaiverButtonClick = {
+            homeViewModel.sendIntent(
+                HomeIntent.UpdateActivitySuggest(activitySuggest = it)
+            )
+        },
+        onRemoveClick = {
+            homeViewModel.sendIntent(
+                HomeIntent.RemoveActivitySuggest(activitySuggest = it)
+            )
         }
     )
 }
@@ -81,7 +99,10 @@ fun HomeContent(
     scaffoldState: ScaffoldState,
     showProgress: Boolean,
     activitySuggestList: List<ActivitySuggest>,
-    onAddActivitySuggestClick: (type: String) -> Unit
+    onAddActivitySuggestClick: (type: String) -> Unit,
+    onCompleteButtonClick: (activitySuggest: ActivitySuggest) -> Unit,
+    onWaiverButtonClick: (activitySuggest: ActivitySuggest) -> Unit,
+    onRemoveClick: (activitySuggest: ActivitySuggest) -> Unit
 ) {
 
     var openAddActivitySuggestDialog by remember { mutableStateOf(false) }
@@ -106,7 +127,10 @@ fun HomeContent(
             ) {
 
                 ActivitySuggestList(
-                    activitySuggestList = activitySuggestList
+                    activitySuggestList = activitySuggestList,
+                    onCompleteButtonClick = onCompleteButtonClick,
+                    onWaiverButtonClick = onWaiverButtonClick,
+                    onRemoveClick = onRemoveClick
                 )
             }
 
@@ -136,10 +160,66 @@ fun HomeContent(
 }
 
 @Composable
-fun ActivitySuggestItem(activitySuggest: ActivitySuggest) {
+fun ActivitySuggestItem(
+    activitySuggest: ActivitySuggest,
+    onCompleteButtonClick: (activitySuggest: ActivitySuggest) -> Unit,
+    onWaiverButtonClick: (activitySuggest: ActivitySuggest) -> Unit,
+    onRemoveClick: (activitySuggest: ActivitySuggest) -> Unit
+) {
+
+    var openRemoveDialogState by remember {
+        mutableStateOf(false)
+    }
+
+    var activitySuggestStatusState by remember {
+        mutableStateOf(activitySuggest.status)
+    }
+
+    var activitySuggestTimeSpent by remember {
+        mutableStateOf(0L)
+    }
+
+    activitySuggestTimeSpent = activitySuggest.timeSpent
+        ?: activitySuggest.createdAt.getPassedHours()
+
+    val bgColor = when (activitySuggestStatusState) {
+        ActivityStatus.COMPLETED -> {
+            Green200
+        }
+        ActivityStatus.WAIVER -> {
+            Red200
+        }
+        else -> {
+            Color.White
+        }
+    }
+
+    if (openRemoveDialogState) {
+        RemoveActivitySuggestDialog(
+            onDismiss = { openRemoveDialogState = false },
+            onPositiveButtonClick = {
+                onRemoveClick(activitySuggest)
+            }
+        )
+    }
+
     Column(
-        modifier = Modifier.padding(MarginPaddingSizeMedium)
+        modifier = Modifier
+            .background(bgColor)
+            .padding(MarginPaddingSizeMedium)
     ) {
+
+        IconButton(
+            modifier = Modifier.align(Alignment.End),
+            onClick = { openRemoveDialogState = true },
+            content = {
+                Icon(
+                    Icons.Outlined.Delete,
+                    contentDescription = null
+                )
+            }
+        )
+
         Row(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -148,16 +228,17 @@ fun ActivitySuggestItem(activitySuggest: ActivitySuggest) {
                     .padding(end = MarginPaddingSizeMedium)
                     .fillMaxWidth()
                     .weight(1f),
-                text = stringResource(
-                    id = R.string.activity_suggest_activity_title,
+                text = pluralStringResource(
+                    id = R.plurals.activity_suggest_activity_title,
+                    count = activitySuggest.participants,
                     activitySuggest.activity, activitySuggest.participants
                 ),
                 fontWeight = FontWeight.Bold
             )
 
             BalloonText(
-                text = activitySuggest.status.status,
-                backgroundColor = activitySuggest.status.getColor()
+                text = activitySuggestStatusState.status,
+                backgroundColor = activitySuggestStatusState.getColor()
             )
         }
 
@@ -175,16 +256,68 @@ fun ActivitySuggestItem(activitySuggest: ActivitySuggest) {
 
         Text(
             modifier = Modifier.padding(top = MarginPaddingSizeMedium),
-            text = stringResource(id = R.string.activity_suggest_time, activitySuggest.timeSpent ?: Date().time)
+            text = stringResource(id = R.string.activity_suggest_time, activitySuggestTimeSpent)
         )
+
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            if (activitySuggestStatusState == ActivityStatus.RUNNING) {
+                Button(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(MarginPaddingSizeMedium),
+                    onClick = {
+                        activitySuggestStatusState = ActivityStatus.COMPLETED
+                        val suggest = activitySuggest.copy(
+                            status = ActivityStatus.COMPLETED,
+                            timeSpent = activitySuggestTimeSpent
+                        )
+                        onCompleteButtonClick(suggest)
+                    },
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Green500),
+                    content = {
+                        Text(text = stringResource(id = R.string.activity_suggest_complete_button))
+                    }
+                )
+
+                Button(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(MarginPaddingSizeMedium),
+                    onClick = {
+                        activitySuggestStatusState = ActivityStatus.WAIVER
+                        val suggest = activitySuggest.copy(
+                            status = ActivityStatus.WAIVER,
+                            timeSpent = activitySuggestTimeSpent
+                        )
+                        onWaiverButtonClick(suggest)
+                    },
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Red500),
+                    content = {
+                        Text(text = stringResource(id = R.string.activity_suggest_waiver_button))
+                    }
+                )
+            }
+        }
     }
 }
 
 @Composable
-fun ActivitySuggestList(activitySuggestList: List<ActivitySuggest>) {
+fun ActivitySuggestList(
+    activitySuggestList: List<ActivitySuggest>,
+    onCompleteButtonClick: (activitySuggest: ActivitySuggest) -> Unit,
+    onWaiverButtonClick: (activitySuggest: ActivitySuggest) -> Unit,
+    onRemoveClick: (activitySuggest: ActivitySuggest) -> Unit
+) {
     LazyColumn {
         items(activitySuggestList) { activitySuggest ->
-            ActivitySuggestItem(activitySuggest = activitySuggest)
+            ActivitySuggestItem(
+                activitySuggest = activitySuggest,
+                onCompleteButtonClick = onCompleteButtonClick,
+                onWaiverButtonClick = onWaiverButtonClick,
+                onRemoveClick = onRemoveClick
+            )
             Divider(color = Color.Black, thickness = 1.dp)
         }
     }
@@ -273,16 +406,57 @@ fun AddActivitySuggestDialog(
 }
 
 @Composable
+fun RemoveActivitySuggestDialog(
+    onDismiss: () -> Unit,
+    onPositiveButtonClick: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = { onDismiss() },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onPositiveButtonClick()
+                    onDismiss()
+                },
+                content = {
+                    Text(
+                        text = stringResource(
+                            id = R.string.activity_suggest_remove_positive_button_dialog
+                        )
+                    )
+                }
+            )
+        },
+        dismissButton = {
+            TextButton(onClick = { onDismiss() }) {
+                Text(
+                    text = stringResource(id = R.string.activity_suggest_remove_negative_button_dialog)
+                )
+            }
+        },
+        title = { Text(text = stringResource(id = R.string.activity_suggest_remove_title_dialog)) }
+    )
+}
+
+@Composable
 @Preview
 fun ActivitySuggestItemPreview() {
-    ActivitySuggestItem(activitySuggest = fakeActivitySuggest)
+    ActivitySuggestItem(
+        activitySuggest = fakeActivitySuggest,
+        onCompleteButtonClick = {},
+        onWaiverButtonClick = {},
+        onRemoveClick = {}
+    )
 }
 
 @Composable
 @Preview
 fun ActivitySuggestListPreview() {
     ActivitySuggestList(
-        activitySuggestList = fakeActivitySuggestList
+        activitySuggestList = fakeActivitySuggestList,
+        onCompleteButtonClick = {},
+        onWaiverButtonClick = {},
+        onRemoveClick = {}
     )
 }
 
@@ -293,7 +467,10 @@ fun HomeContentPreview() {
         scaffoldState = rememberScaffoldState(),
         showProgress = true,
         activitySuggestList = fakeActivitySuggestList,
-        onAddActivitySuggestClick = {}
+        onAddActivitySuggestClick = {},
+        onWaiverButtonClick = {},
+        onCompleteButtonClick = {},
+        onRemoveClick = {}
     )
 }
 
@@ -315,13 +492,28 @@ private val fakeActivitySuggest = ActivitySuggest(
     price = 0.0,
     type = "busywork",
     status = ActivityStatus.COMPLETED,
-    timeSpent = Date(),
-    createdAt = Date()
+    timeSpent = 0L,
+    createdAt = Date(),
+    activityId = 0
+)
+
+private val fakeActivitySuggest2 = ActivitySuggest(
+    accessibility = 0.0,
+    activity = "Organize a bookshelf",
+    key = "6098037",
+    link = "http://",
+    participants = 2,
+    price = 0.0,
+    type = "busywork",
+    status = ActivityStatus.RUNNING,
+    timeSpent = null,
+    createdAt = Date(1681272000000),
+    activityId = 0
 )
 
 private val fakeActivitySuggestList = listOf(
     fakeActivitySuggest,
-    fakeActivitySuggest,
+    fakeActivitySuggest2,
     fakeActivitySuggest,
     fakeActivitySuggest,
     fakeActivitySuggest

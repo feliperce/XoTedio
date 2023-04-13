@@ -20,7 +20,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import br.com.mobileti.xotedio.design.ui.MarginPaddingSizeMedium
+import br.com.mobileti.xotedio.design.ui.Purple40
 import br.com.mobileti.xotedio.design.ui.TextSizeSmall
+import br.com.mobileti.xotedio.design.ui.XoTedioTheme
 
 @Composable
 fun DefaultAppBar(
@@ -35,6 +37,7 @@ fun DefaultAppBar(
     actions: @Composable (RowScope.() -> Unit)? = null
 ) {
     TopAppBar(
+        backgroundColor = Purple40,
         title = {
             Column(
                 modifier = Modifier.fillMaxWidth()

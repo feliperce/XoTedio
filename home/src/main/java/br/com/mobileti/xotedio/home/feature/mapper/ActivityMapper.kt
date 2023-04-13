@@ -13,7 +13,8 @@ fun ActivityResponse.toActivitySuggest() =
         participants = participants ?: 0,
         price = price ?: 0.0,
         type = type ?: "",
-        createdAt = Date()
+        createdAt = Date(),
+        activityId = 0
     )
 
 @JvmName("toActivitySuggests")
@@ -22,8 +23,9 @@ fun List<ActivityResponse>.toActivitySuggestList() =
         it.toActivitySuggest()
     }
 
-fun ActivitySuggest.toActivityEntity(timeSpent: Date? = null) =
+fun ActivitySuggest.toActivityEntity() =
     ActivityEntity(
+        activityId = activityId,
         activity = activity,
         accessibility = accessibility,
         key = key,
@@ -31,7 +33,7 @@ fun ActivitySuggest.toActivityEntity(timeSpent: Date? = null) =
         participants = participants,
         price = price,
         type = type,
-        createdAt = Date(),
+        createdAt = createdAt,
         status = status,
         timeSpent = timeSpent
     )
@@ -47,7 +49,8 @@ fun ActivityEntity.toActivitySuggest() =
         type = type,
         status = status,
         timeSpent = timeSpent,
-        createdAt = createdAt
+        createdAt = createdAt,
+        activityId = activityId
     )
 
 fun List<ActivityEntity>.toActivitySuggestList() =

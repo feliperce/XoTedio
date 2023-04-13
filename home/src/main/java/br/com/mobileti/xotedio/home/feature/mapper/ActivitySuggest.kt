@@ -4,6 +4,7 @@ import br.com.mobileti.xotedio.data.remote.ActivityStatus
 import java.util.Date
 
 data class ActivitySuggest(
+    val activityId: Long,
     val accessibility: Double,
     val activity: String,
     val key: String,
@@ -12,6 +13,6 @@ data class ActivitySuggest(
     val price: Double,
     val type: String,
     val status: ActivityStatus = ActivityStatus.RUNNING,
-    val timeSpent: Date? = null,
+    val timeSpent: Long? = null,
     val createdAt: Date
 )

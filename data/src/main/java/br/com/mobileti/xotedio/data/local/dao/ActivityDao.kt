@@ -4,7 +4,9 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import br.com.mobileti.xotedio.data.local.entity.ActivityEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ActivityDao {
@@ -19,6 +21,9 @@ interface ActivityDao {
     fun deleteActivity(activityEntity: ActivityEntity)
 
     @Query("SELECT * FROM activities")
-    fun getAllActivities(): List<ActivityEntity>
+    fun getAllActivities(): Flow<List<ActivityEntity>>
+
+    @Update
+    fun updateActivity(activityEntity: ActivityEntity)
 
 }

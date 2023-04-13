@@ -1,11 +1,14 @@
 package br.com.mobileti.xotedio.home.feature.home.viewmodel
 
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.mobileti.xotedio.data.Resource
 import br.com.mobileti.xotedio.home.feature.home.repository.HomeRepository
 import br.com.mobileti.xotedio.home.feature.home.state.HomeIntent
 import br.com.mobileti.xotedio.home.feature.home.state.HomeUiState
+import br.com.mobileti.xotedio.home.feature.mapper.ActivitySuggest
+import br.com.mobileti.xotedio.home.feature.mapper.toActivitySuggestList
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -40,14 +43,35 @@ class HomeViewModel(
                     is HomeIntent.GetAllRandomActivitySuggest -> {
                         getAllActivitySuggest()
                     }
+                    is HomeIntent.UpdateActivitySuggest -> {
+                        updateActivitySuggest(activitySuggest = intent.activitySuggest)
+                    }
+                    is HomeIntent.RemoveActivitySuggest -> {
+                        removeActivitySuggest(activitySuggest = intent.activitySuggest)
+                    }
                 }
             }.launchIn(viewModelScope)
+    }
+
+    private fun removeActivitySuggest(activitySuggest: ActivitySuggest) {
+        viewModelScope.launch {
+            homeRepository.removeActivitySuggest(activitySuggest)
+            getAllActivitySuggest()
+        }
+    }
+
+    private fun updateActivitySuggest(activitySuggest: ActivitySuggest) {
+        viewModelScope.launch {
+            homeRepository.updateActivitySuggest(activitySuggest)
+        }
     }
 
     private fun getAllActivitySuggest() {
         viewModelScope.launch {
             _homeState.update {
-                it.copy(activitySuggestList = homeRepository.getAllActivitySuggest())
+                it.copy(
+                    activitySuggestList = homeRepository.getAllActivitySuggest().first()
+                )
             }
         }
     }
