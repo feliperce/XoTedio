@@ -5,9 +5,9 @@ import br.com.mobileti.xotedio.home.feature.mapper.ActivitySuggest
 
 data class HomeUiState(
     val loading: Boolean = false,
-    val error: ErrorType? = null,
+    var error: ErrorType? = null,
     val activitySuggestList: List<ActivitySuggest> = arrayListOf(),
-    val isInserted: Boolean = false
+    var isInserted: Boolean = false
 )
 
 sealed class HomeIntent {

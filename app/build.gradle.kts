@@ -96,5 +96,6 @@ dependencies {
 
     implementation(project(":design"))
     implementation(project(":home"))
+    implementation(project(":data"))
 
 }

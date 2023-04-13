@@ -12,4 +12,6 @@
     <string name="add_activity_suggest_positive_button_dialog">adicionar</string>
     <string name="add_activity_suggest_negative_button_dialog">cancelar</string>
 
+    <string name="home_activity_insert_sucess_snackbar">Atividade aleatória adicionada com sucesso!</string>
+
 </resources>

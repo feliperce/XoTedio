@@ -10,9 +10,9 @@ sealed class Resource<T>(
     class Error<T>(errorType: ErrorType, data: T? = null) : Resource<T>(error = errorType, data = data)
 }
 
-enum class ErrorType(errorMsg: Int) {
+enum class ErrorType(val errorMsg: Int) {
     NONE(-1),
-    CONNECTION(1),
-    TIMEOUT(2),
-    GENERIC(3)
+    CONNECTION(R.string.connection_error),
+    TIMEOUT(R.string.timeout_error),
+    GENERIC(R.string.generic_error)
 }

@@ -9,7 +9,7 @@ import retrofit2.http.Query
 interface BoredApiService {
 
     @GET("/api/activity")
-    fun getRandomActivity(
+    suspend fun getRandomActivity(
         @Query("type") type: String
     ): Response<ActivityResponse>
 }

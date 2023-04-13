@@ -1,6 +1,5 @@
 package br.com.mobileti.xotedio.home.feature.home.view
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -15,35 +14,75 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import br.com.mobileti.xotedio.data.ErrorType
 import br.com.mobileti.xotedio.data.remote.ActivityStatus
 import br.com.mobileti.xotedio.data.remote.ActivitySuggestType
 import br.com.mobileti.xotedio.design.components.DefaultAppBar
 import br.com.mobileti.xotedio.design.ui.MarginPaddingSizeMedium
-import br.com.mobileti.xotedio.design.ui.Pink40
 import br.com.mobileti.xotedio.home.R
+import br.com.mobileti.xotedio.home.feature.home.state.HomeIntent
+import br.com.mobileti.xotedio.home.feature.home.viewmodel.HomeViewModel
 import br.com.mobileti.xotedio.home.feature.mapper.ActivitySuggest
+import org.koin.androidx.compose.getViewModel
 import java.util.*
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(homeViewModel: HomeViewModel = getViewModel()) {
 
+    val homeUiState by homeViewModel.homeState.collectAsState()
+
+    val scaffoldState = rememberScaffoldState()
+
+    val insertSuccessMsg = stringResource(id = R.string.home_activity_insert_sucess_snackbar)
+
+    homeUiState.error?.let { error ->
+        if (error != ErrorType.NONE) {
+            val errorMsg = stringResource(id = error.errorMsg)
+
+            LaunchedEffect(error) {
+                scaffoldState.snackbarHostState.showSnackbar(message = errorMsg)
+                homeUiState.error = null
+            }
+        }
+    }
+
+    if (homeUiState.isInserted) {
+        LaunchedEffect(Unit) {
+            scaffoldState.snackbarHostState.showSnackbar(
+                message = insertSuccessMsg
+            )
+            homeUiState.isInserted = false
+        }
+    }
+
+    homeViewModel.sendIntent(
+        HomeIntent.GetAllRandomActivitySuggest
+    )
+
+    HomeContent(
+        scaffoldState = scaffoldState,
+        showProgress = homeUiState.loading,
+        activitySuggestList = homeUiState.activitySuggestList,
+        onAddActivitySuggestClick = {
+            homeViewModel.sendIntent(
+                HomeIntent.InsertRandomActivitySuggest(type = it)
+            )
+        }
+    )
 }
 
 @Composable
 fun HomeContent(
     scaffoldState: ScaffoldState,
     showProgress: Boolean,
-    randomActivitySuggest: ActivitySuggest,
     activitySuggestList: List<ActivitySuggest>,
-    onAddActivitySuggestClick: (type: String) -> Unit,
-    onFabButtonClick: () -> Unit
+    onAddActivitySuggestClick: (type: String) -> Unit
 ) {
 
     var openAddActivitySuggestDialog by remember { mutableStateOf(false) }
 
     if (openAddActivitySuggestDialog) {
         AddActivitySuggestDialog(
-            activitySuggest = randomActivitySuggest,
             onDismiss = { openAddActivitySuggestDialog = false },
             onPositiveButtonClick = { type ->
                 onAddActivitySuggestClick(type)
@@ -78,8 +117,7 @@ fun HomeContent(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    onFabButtonClick()
-                    //openAddActivitySuggestDialog = true
+                    openAddActivitySuggestDialog = true
                 },
                 content = {
                     Icon(
@@ -128,7 +166,6 @@ fun ActivitySuggestList(activitySuggestList: List<ActivitySuggest>) {
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AddActivitySuggestDialog(
-    activitySuggest: ActivitySuggest,
     onDismiss: () -> Unit,
     onPositiveButtonClick: (type: String) -> Unit
 ) {
@@ -165,28 +202,6 @@ fun AddActivitySuggestDialog(
         title = { Text(text = stringResource(id = R.string.add_activity_suggest_title_dialog)) },
         text = {
             Column {
-                Column(
-                    modifier = Modifier
-                        .background(Pink40)
-                        .padding(MarginPaddingSizeMedium)
-                ) {
-                    Text(
-                        text = stringResource(
-                            id = R.string.activity_suggest_activity_title,
-                            activitySuggest.activity, activitySuggest.participants
-                        )
-                    )
-
-                    CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.disabled) {
-                        Text(text = activitySuggest.type)
-                    }
-
-                    Text(
-                        modifier = Modifier.padding(top = MarginPaddingSizeMedium),
-                        text = stringResource(id = R.string.activity_suggest_price_title, activitySuggest.price)
-                    )
-                }
-
                 ExposedDropdownMenuBox(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -252,9 +267,7 @@ fun HomeContentPreview() {
         scaffoldState = rememberScaffoldState(),
         showProgress = true,
         activitySuggestList = fakeActivitySuggestList,
-        randomActivitySuggest = fakeActivitySuggest,
-        onAddActivitySuggestClick = {},
-        onFabButtonClick = {}
+        onAddActivitySuggestClick = {}
     )
 }
 
@@ -262,7 +275,6 @@ fun HomeContentPreview() {
 @Preview
 fun AddActivitySuggestDialogPreview() {
     AddActivitySuggestDialog(
-        activitySuggest = fakeActivitySuggest,
         onDismiss = {},
         onPositiveButtonClick = {}
     )

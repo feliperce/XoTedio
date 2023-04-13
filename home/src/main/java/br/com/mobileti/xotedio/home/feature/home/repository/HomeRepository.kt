@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onEach
 
-class ActivitySuggestRepository(
+class HomeRepository(
     private val boredApiService: BoredApiService,
     private val activityDao: ActivityDao
 ) {
