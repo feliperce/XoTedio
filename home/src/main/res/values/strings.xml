@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="appbar_title">Xô Tédio</string>
+
     <string name="activity_suggest_activity_title">%s - (%s participantes)</string>
 
     <string name="activity_suggest_price_title">Preço: %s</string>
+
+    <string name="add_activity_suggest_title_dialog">Adicionar sugestão de atividade</string>
+    <string name="add_activity_suggest_type_dialog">Tipo</string>
+    <string name="add_activity_suggest_positive_button_dialog">adicionar</string>
+    <string name="add_activity_suggest_negative_button_dialog">cancelar</string>
 
 </resources>
