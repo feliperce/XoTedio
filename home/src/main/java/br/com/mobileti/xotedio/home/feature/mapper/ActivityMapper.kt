@@ -23,7 +23,7 @@ fun List<ActivityResponse>.toActivitySuggestList() =
         it.toActivitySuggest()
     }
 
-fun ActivitySuggest.toActivityEntity(timeSpent: Date? = null) =
+fun ActivitySuggest.toActivityEntity() =
     ActivityEntity(
         activityId = activityId,
         activity = activity,

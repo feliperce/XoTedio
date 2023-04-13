@@ -16,5 +16,5 @@ data class ActivityEntity(
     val type: String,
     val status: ActivityStatus,
     @ColumnInfo(name = "created_at") val createdAt: Date,
-    @ColumnInfo(name = "time_spent") val timeSpent: Date?
+    @ColumnInfo(name = "time_spent") val timeSpent: Long?
 )

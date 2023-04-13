@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -166,11 +167,8 @@ fun ActivitySuggestItem(
         mutableStateOf(0L)
     }
 
-    activitySuggestTimeSpent = if (activitySuggest.timeSpent != null) {
-        activitySuggest.timeSpent.getPassedHours()
-    } else {
-        activitySuggest.createdAt.getPassedHours()
-    }
+    activitySuggestTimeSpent = activitySuggest.timeSpent
+        ?: activitySuggest.createdAt.getPassedHours()
 
     val bgColor = when (activitySuggestStatusState) {
         ActivityStatus.COMPLETED -> {
@@ -197,8 +195,9 @@ fun ActivitySuggestItem(
                     .padding(end = MarginPaddingSizeMedium)
                     .fillMaxWidth()
                     .weight(1f),
-                text = stringResource(
-                    id = R.string.activity_suggest_activity_title,
+                text = pluralStringResource(
+                    id = R.plurals.activity_suggest_activity_title,
+                    count = activitySuggest.participants,
                     activitySuggest.activity, activitySuggest.participants
                 ),
                 fontWeight = FontWeight.Bold
@@ -230,7 +229,7 @@ fun ActivitySuggestItem(
         Row(
             modifier = Modifier.fillMaxWidth()
         ) {
-            //if (activitySuggestStatusState == ActivityStatus.RUNNING) {
+            if (activitySuggestStatusState == ActivityStatus.RUNNING) {
                 Button(
                     modifier = Modifier
                         .weight(1f)
@@ -239,10 +238,11 @@ fun ActivitySuggestItem(
                         activitySuggestStatusState = ActivityStatus.COMPLETED
                         val suggest = activitySuggest.copy(
                             status = ActivityStatus.COMPLETED,
-                            timeSpent = Date(activitySuggestTimeSpent)
+                            timeSpent = activitySuggestTimeSpent
                         )
                         onCompleteButtonClick(suggest)
                     },
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Green500),
                     content = {
                         Text(text = stringResource(id = R.string.activity_suggest_complete_button))
                     }
@@ -254,15 +254,18 @@ fun ActivitySuggestItem(
                         .padding(MarginPaddingSizeMedium),
                     onClick = {
                         activitySuggestStatusState = ActivityStatus.WAIVER
-                        val suggest = activitySuggest.copy(status = ActivityStatus.WAIVER)
+                        val suggest = activitySuggest.copy(
+                            status = ActivityStatus.WAIVER,
+                            timeSpent = activitySuggestTimeSpent
+                        )
                         onWaiverButtonClick(suggest)
                     },
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Red700),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Red500),
                     content = {
                         Text(text = stringResource(id = R.string.activity_suggest_waiver_button))
                     }
                 )
-            //}
+            }
         }
     }
 }
@@ -418,7 +421,7 @@ private val fakeActivitySuggest = ActivitySuggest(
     price = 0.0,
     type = "busywork",
     status = ActivityStatus.COMPLETED,
-    timeSpent = Date(),
+    timeSpent = 0L,
     createdAt = Date(),
     activityId = 0
 )
@@ -428,7 +431,7 @@ private val fakeActivitySuggest2 = ActivitySuggest(
     activity = "Organize a bookshelf",
     key = "6098037",
     link = "http://",
-    participants = 0,
+    participants = 2,
     price = 0.0,
     type = "busywork",
     status = ActivityStatus.RUNNING,
