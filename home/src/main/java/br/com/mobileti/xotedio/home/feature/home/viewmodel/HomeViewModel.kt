@@ -63,6 +63,7 @@ class HomeViewModel(
     private fun updateActivitySuggest(activitySuggest: ActivitySuggest) {
         viewModelScope.launch {
             homeRepository.updateActivitySuggest(activitySuggest)
+            getAllActivitySuggest()
         }
     }
 
