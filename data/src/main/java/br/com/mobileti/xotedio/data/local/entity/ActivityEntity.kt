@@ -1,6 +1,7 @@
 package br.com.mobileti.xotedio.data.local.entity
 
 import androidx.room.*
+import br.com.mobileti.xotedio.data.remote.ActivityStatus
 import java.util.*
 
 @Entity(tableName = "activities")
@@ -13,5 +14,7 @@ data class ActivityEntity(
     val participants: Int,
     val price: Double,
     val type: String,
-    @ColumnInfo(name = "updated_at") val updatedAt: Date
+    val status: ActivityStatus,
+    @ColumnInfo(name = "created_at") val createdAt: Date,
+    @ColumnInfo(name = "time_spent") val timeSpent: Date?
 )

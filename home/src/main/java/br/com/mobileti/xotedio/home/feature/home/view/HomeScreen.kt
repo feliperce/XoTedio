@@ -1,13 +1,9 @@
 package br.com.mobileti.xotedio.home.feature.home.view
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
@@ -17,17 +13,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.text.isDigitsOnly
+import br.com.mobileti.xotedio.data.remote.ActivityStatus
 import br.com.mobileti.xotedio.data.remote.ActivitySuggestType
 import br.com.mobileti.xotedio.design.components.DefaultAppBar
 import br.com.mobileti.xotedio.design.ui.MarginPaddingSizeMedium
 import br.com.mobileti.xotedio.design.ui.Pink40
 import br.com.mobileti.xotedio.home.R
 import br.com.mobileti.xotedio.home.feature.mapper.ActivitySuggest
+import java.util.*
 
 @Composable
 fun HomeScreen() {
@@ -280,7 +275,10 @@ private val fakeActivitySuggest = ActivitySuggest(
     link = "http://",
     participants = 0,
     price = 0.0,
-    type = "busywork"
+    type = "busywork",
+    status = ActivityStatus.COMPLETED,
+    timeSpent = Date(),
+    createdAt = Date()
 )
 
 private val fakeActivitySuggestList = listOf(
