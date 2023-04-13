@@ -38,10 +38,18 @@ class HomeViewModel(
                         insertRandomActivitySuggest(type = intent.type)
                     }
                     is HomeIntent.GetAllRandomActivitySuggest -> {
-
+                        getAllActivitySuggest()
                     }
                 }
             }.launchIn(viewModelScope)
+    }
+
+    private fun getAllActivitySuggest() {
+        viewModelScope.launch {
+            _homeState.update {
+                it.copy(activitySuggestList = homeRepository.getAllActivitySuggest())
+            }
+        }
     }
 
     private fun insertRandomActivitySuggest(type: String) {

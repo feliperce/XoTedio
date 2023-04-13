@@ -12,14 +12,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import br.com.mobileti.xotedio.data.ErrorType
 import br.com.mobileti.xotedio.data.remote.ActivityStatus
 import br.com.mobileti.xotedio.data.remote.ActivitySuggestType
+import br.com.mobileti.xotedio.design.components.BalloonText
 import br.com.mobileti.xotedio.design.components.DefaultAppBar
+import br.com.mobileti.xotedio.design.ui.Green500
 import br.com.mobileti.xotedio.design.ui.MarginPaddingSizeMedium
 import br.com.mobileti.xotedio.home.R
+import br.com.mobileti.xotedio.home.feature.home.extensions.getColor
 import br.com.mobileti.xotedio.home.feature.home.state.HomeIntent
 import br.com.mobileti.xotedio.home.feature.home.viewmodel.HomeViewModel
 import br.com.mobileti.xotedio.home.feature.mapper.ActivitySuggest
@@ -135,22 +140,43 @@ fun ActivitySuggestItem(activitySuggest: ActivitySuggest) {
     Column(
         modifier = Modifier.padding(MarginPaddingSizeMedium)
     ) {
-        Text(
-            text = stringResource(
-                id = R.string.activity_suggest_activity_title,
-                activitySuggest.activity, activitySuggest.participants
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                modifier = Modifier
+                    .padding(end = MarginPaddingSizeMedium)
+                    .fillMaxWidth()
+                    .weight(1f),
+                text = stringResource(
+                    id = R.string.activity_suggest_activity_title,
+                    activitySuggest.activity, activitySuggest.participants
+                ),
+                fontWeight = FontWeight.Bold
             )
-        )
 
-        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.disabled) {
-            Text(text = activitySuggest.type)
+            BalloonText(
+                text = activitySuggest.status.status,
+                backgroundColor = activitySuggest.status.getColor()
+            )
         }
+
+        Text(
+            text = activitySuggest.type,
+            fontStyle = FontStyle.Italic,
+            fontWeight = FontWeight.Light
+        )
 
         Text(
             modifier = Modifier.padding(top = MarginPaddingSizeMedium),
             text = stringResource(id = R.string.activity_suggest_price_title, activitySuggest.price)
         )
         Text(text = activitySuggest.link)
+
+        Text(
+            modifier = Modifier.padding(top = MarginPaddingSizeMedium),
+            text = stringResource(id = R.string.activity_suggest_time, activitySuggest.timeSpent ?: Date().time)
+        )
     }
 }
 
