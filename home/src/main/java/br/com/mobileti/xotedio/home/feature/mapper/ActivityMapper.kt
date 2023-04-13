@@ -33,7 +33,7 @@ fun ActivitySuggest.toActivityEntity(timeSpent: Date? = null) =
         participants = participants,
         price = price,
         type = type,
-        createdAt = Date(),
+        createdAt = createdAt,
         status = status,
         timeSpent = timeSpent
     )

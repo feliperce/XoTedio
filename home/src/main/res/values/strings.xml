@@ -5,7 +5,7 @@
 
     <string name="activity_suggest_activity_title">%s - (%s participantes)</string>
 
-    <string name="activity_suggest_time">Tempo na atividade: %s</string>
+    <string name="activity_suggest_time">Tempo na atividade: %sh</string>
 
     <string name="activity_suggest_price_title">Preço: %s</string>
 

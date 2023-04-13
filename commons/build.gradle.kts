@@ -35,4 +35,7 @@ dependencies {
 
     implementation(Dependencies.Androidx.core)
     implementation(Dependencies.Androidx.Lifecycle.runtimeKtx)
+
+    testImplementation(Dependencies.Junit.junit)
+    androidTestImplementation(Dependencies.Androidx.junit)
 }

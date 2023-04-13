@@ -162,10 +162,14 @@ fun ActivitySuggestItem(
         mutableStateOf(activitySuggest.status)
     }
 
-    val timeSpent = if (activitySuggest.timeSpent != null) {
+    var activitySuggestTimeSpent by remember {
+        mutableStateOf(0L)
+    }
+
+    activitySuggestTimeSpent = if (activitySuggest.timeSpent != null) {
         activitySuggest.timeSpent.getPassedHours()
     } else {
-        activitySuggest.timeSpent?.time
+        activitySuggest.createdAt.getPassedHours()
     }
 
     val bgColor = when (activitySuggestStatusState) {
@@ -220,20 +224,23 @@ fun ActivitySuggestItem(
 
         Text(
             modifier = Modifier.padding(top = MarginPaddingSizeMedium),
-            text = stringResource(id = R.string.activity_suggest_time, timeSpent?.timeMillisToDateFormatString() ?: 0.0)
+            text = stringResource(id = R.string.activity_suggest_time, activitySuggestTimeSpent)
         )
 
         Row(
             modifier = Modifier.fillMaxWidth()
         ) {
-            if (activitySuggestStatusState == ActivityStatus.RUNNING) {
+            //if (activitySuggestStatusState == ActivityStatus.RUNNING) {
                 Button(
                     modifier = Modifier
                         .weight(1f)
                         .padding(MarginPaddingSizeMedium),
                     onClick = {
                         activitySuggestStatusState = ActivityStatus.COMPLETED
-                        val suggest = activitySuggest.copy(status = ActivityStatus.COMPLETED)
+                        val suggest = activitySuggest.copy(
+                            status = ActivityStatus.COMPLETED,
+                            timeSpent = Date(activitySuggestTimeSpent)
+                        )
                         onCompleteButtonClick(suggest)
                     },
                     content = {
@@ -255,7 +262,7 @@ fun ActivitySuggestItem(
                         Text(text = stringResource(id = R.string.activity_suggest_waiver_button))
                     }
                 )
-            }
+            //}
         }
     }
 }
@@ -416,9 +423,23 @@ private val fakeActivitySuggest = ActivitySuggest(
     activityId = 0
 )
 
+private val fakeActivitySuggest2 = ActivitySuggest(
+    accessibility = 0.0,
+    activity = "Organize a bookshelf",
+    key = "6098037",
+    link = "http://",
+    participants = 0,
+    price = 0.0,
+    type = "busywork",
+    status = ActivityStatus.RUNNING,
+    timeSpent = null,
+    createdAt = Date(1681272000000),
+    activityId = 0
+)
+
 private val fakeActivitySuggestList = listOf(
     fakeActivitySuggest,
-    fakeActivitySuggest,
+    fakeActivitySuggest2,
     fakeActivitySuggest,
     fakeActivitySuggest,
     fakeActivitySuggest
