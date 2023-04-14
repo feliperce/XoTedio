@@ -7,6 +7,7 @@
 * Jetpack Compose UI Test
 * MVI
 * Room
+* Koin
 * Retrofit
 * Coroutines
 * Feature Modularization
